@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HelloWorld
+Bundle-SymbolicName: com.javaworld.sample.HelloWorld
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.javaworld.sample.HelloServiceImporting.Activator
+Bundle-Vendor: JAVAWORLD
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.javaworld.sample.Implem,
+ com.javaworld.sample.service,
+ org.osgi.framework;version="1.3.0"
+Automatic-Module-Name: com.javaworld.sample.HelloWorld
