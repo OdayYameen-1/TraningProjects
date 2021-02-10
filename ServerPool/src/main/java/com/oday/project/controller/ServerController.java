@@ -12,9 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.oday.project.configuration.AerospikeConfiguration;
 import com.oday.project.model.Server;
 import com.oday.project.model.ServerStatus;
@@ -29,52 +32,32 @@ public class ServerController {
 	
 	private Thread t;
 	
-	@GetMapping("/getServer")
-	public String getServer() {
-
-		return serverRepository.findAll().toString();
+	@RequestMapping(value = "/getServer",headers = "Accept=application/json")
+	public Iterable<Server> getServer() {
+		
+		return serverRepository.findAll();
 
 	}
 
-	@GetMapping("/getMyServer/{id}")
-	public String getMyServer(@PathVariable("id") Long id) {
-		Server s= serverRepository.findById(id).get();
+	@RequestMapping(value = "/getMyServer/{id}",headers = "Accept=application/json")
+	public Server getMyServer(@PathVariable(value  = "id") long id) {
 		
-		if(s.getStatus()==ServerStatus.Active)
-			return s.toString();
-		else {
-			Thread thread=new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-				try {
-					Thread.sleep(12000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-					
-				s.setStatus(ServerStatus.Active);
-				 System.out.println("the server with id= " +s.getId()+" now is in = "+s.getStatus());
-				serverRepository.save(s);
-					
-				}
-			});
-					
-			thread.start();
-			
-			return "Your Server Not done yet ...Wait";
-			
-		}
-		
-			
+		return serverRepository.findById(id).get();
+
 	}
 
-	@GetMapping("/allocate/{capacity}/{nameOfUser}")
-	public RedirectView allocate(@PathVariable(value = "capacity") int capacity,
+	@RequestMapping(value = "/allocate/{capacity}/{nameOfUser}",headers = "Accept=application/json")
+	public String allocate(@PathVariable(value = "capacity") int capacity,
 			@PathVariable(value = "nameOfUser") String nameOfUser) {
 		if (capacity > 100)
-			return new RedirectView("/getServer");
+			return "Your capacity grater than 100";
+		
+		String string= allocateServer( capacity,nameOfUser);
+		return string;
+		
+		
+	}
+	private String allocateServer(int capacity, String nameOfUser) {
 		List<Server> servers = new ArrayList<Server>();
 		serverRepository.findAll().forEach(servers::add);
 
@@ -99,14 +82,35 @@ public class ServerController {
 			serverRepository.update(s);
 		} catch (IncorrectVersion e) {
 			System.err.println("eeeeeeeeerrrrrrrrrrrrrroooooooooooorrrrrrr");
-			return new RedirectView("/allocate/" + capacity + "/" + nameOfUser);
-
+			return allocateServer(capacity, nameOfUser);
+			
 		}
-
-		return new RedirectView("/getMyServer/" + s.getId());
-
+	
+			Thread thread=new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+				try {
+					Thread.sleep(12000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					
+				s.setStatus(ServerStatus.Active);
+				 System.out.println("the server with id= " +s.getId()+" now is in = "+s.getStatus());
+				serverRepository.save(s);
+					
+				}
+			});
+					
+			thread.start();
+		return "you will take the server after 12 sec , your server id ="+s.getId();
+		
 	}
 
+
+///////////////////////*///////////////////////////////*///////////////////////
 	private Server getBestServer(List<Server> servers, int capacity) {
 
 		for (Server server : servers) {

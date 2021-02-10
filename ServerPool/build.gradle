@@ -18,6 +18,9 @@ dependencies {
 	 compile "com.aerospike:aerospike-client:5.0.3"
      compile 'com.googlecode.json-simple:json-simple:1.1.1'
       compile ('com.aerospike:spring-data-aerospike:2.4.2.RELEASE')
+      
+        implementation 'com.google.code.gson:gson:2.8.6'
+      
 }
 
 test {
