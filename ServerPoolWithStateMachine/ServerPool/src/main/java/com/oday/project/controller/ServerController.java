@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
+import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.state.State;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,9 +35,9 @@ public class ServerController {
 	/**
 	 *
 	 */
-	@Autowired
-	private StateMachine<ServerStatus, ServerEvent> stateMachine;
 
+	@Autowired
+	private StateMachineFactory stateMachineFactory;
 
 
 
@@ -70,7 +71,7 @@ public class ServerController {
 		serverRepository.findAll().forEach(servers::add);
 
 		Server s = getBestServer(servers, capacity);
-
+		StateMachine test=stateMachineFactory.getStateMachine(String.valueOf(s.getId()));
 		s.setStatus(ServerStatus.Createing);
 		 System.out.println("the server with id= " +s.getId()+" now is in = "+s.getStatus());
 
@@ -93,9 +94,9 @@ public class ServerController {
 			return allocateServer(capacity, nameOfUser);
 			
 		}
-		stateMachine.getExtendedState().getVariables().put("Server", s);
 
-		stateMachine.start();
+
+		test.start();
 
 
 

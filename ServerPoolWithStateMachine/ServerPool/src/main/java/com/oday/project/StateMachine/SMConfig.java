@@ -1,15 +1,18 @@
 package com.oday.project.StateMachine;
 
 
+import com.oday.project.configuration.AerospikeConfiguration;
 import com.oday.project.controller.ServerController;
 import com.oday.project.model.Server;
 import com.oday.project.model.ServerStatus;
 import com.oday.project.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachine;
+import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
@@ -18,7 +21,8 @@ import static com.oday.project.StateMachine.LoggingUtils.LOGGER;
 import static com.oday.project.StateMachine.LoggingUtils.getStateInfo;
 
 @Configuration
-@EnableStateMachine
+@EnableStateMachineFactory
+@ComponentScan(basePackageClasses = AerospikeConfiguration.class)
 public class SMConfig extends StateMachineConfigurerAdapter<ServerStatus, ServerEvent> {
 @Autowired
 ServerRepository serverRepository;
@@ -49,7 +53,9 @@ ServerRepository serverRepository;
 
     private Action<ServerStatus, ServerEvent> myAction() {
         return ctx -> {
-            Server value = ctx.getExtendedState().get("Server", Server.class);
+
+             Long id= Long.valueOf(( ctx.getStateMachine().getId()));
+             Server value=serverRepository.findById(id).get();
             value.setStatus(ServerStatus.Active);
             System.out.println("the server with id= " +value.getId()+" now is in = "+value.getStatus());
             serverRepository.save(value);

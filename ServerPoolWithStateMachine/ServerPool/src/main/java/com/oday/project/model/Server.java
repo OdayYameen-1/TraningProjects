@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-
 public class Server {
 	@Id
 	
