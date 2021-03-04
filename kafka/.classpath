@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="kafkaConsumer/src/main/java"/>
+	<classpathentry kind="src" path="kafkaConsumer/src/test/java"/>
+	<classpathentry kind="src" path="TheDemoKafkaExampleSpringBoot/src/main/java"/>
+	<classpathentry kind="src" path="TheDemoKafkaExampleSpringBoot/src/test/java"/>
+	<classpathentry kind="lib" path="kafkaConsumer/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="TheDemoKafkaExampleSpringBoot/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

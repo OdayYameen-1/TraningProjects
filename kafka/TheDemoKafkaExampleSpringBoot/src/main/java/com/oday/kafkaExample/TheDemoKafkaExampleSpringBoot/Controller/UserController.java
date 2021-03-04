@@ -18,9 +18,9 @@ public class UserController {
 	
 	private String theTopic="Spring";
 	
-	@GetMapping("/publish/{name}/{age}/{dep}")
-	public String publish(@PathVariable("name")String name,@PathVariable("age")int age,@PathVariable("dep")String dep) {
-	User user=new User(name,age,dep);
+	@GetMapping("/publish/{id}/{name}")
+	public String publish(@PathVariable("id")int id,@PathVariable("name")String name) {
+	User user=new User(id,name);
 	kafkaTemplate.send(theTopic,user);
 		
 	return "the user published sucssessfully";	
